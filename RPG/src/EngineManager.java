@@ -20,11 +20,13 @@ public class EngineManager {
 	}
 	
 	private static void initGame(){
-		game = new Runescape();
+		game = new RPG();
 	}
 	
 	private static void gameLoop(){
+		Time.init();
 		while(!Display.isCloseRequested()){
+			Time.update();
 			getInput();
 			update();
 			render();
