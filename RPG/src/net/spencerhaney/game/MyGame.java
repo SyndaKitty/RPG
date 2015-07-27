@@ -7,8 +7,9 @@ public class MyGame extends Game
     public MyGame()
     {
         super("Game");
+        addObject(new Cube());
     }
-
+    
     @Override
     public void update()
     {

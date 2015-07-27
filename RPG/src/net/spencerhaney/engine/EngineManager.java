@@ -56,8 +56,8 @@ public class EngineManager
         while (screen.isOpen())
         {
             screen.update();
-            game.update();
-            game.render();            
+            game.gameRender();
+            game.gameRender();            
         }
     }
 
