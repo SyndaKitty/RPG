@@ -35,7 +35,7 @@ public class EngineManager
         Logging.fine(this, "Initiating engine.");
 
         Time.init();
-        
+
         // Setup error callback. Print to System.err
         glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
 
@@ -47,17 +47,19 @@ public class EngineManager
 
         screen = new ScreenManager();
         screen.createFullWindow(game.getTitle());
+        
+        screen.init();
+        game.init();
     }
 
     private void loop()
     {
         screen.show();
-        screen.init();   
         while (screen.isOpen())
         {
             screen.update();
             game.gameRender();
-            game.gameRender();            
+            game.gameRender();
         }
     }
 
@@ -66,7 +68,10 @@ public class EngineManager
         Logging.fine(this, "Stopping engine.");
         game.cleanup();
         glfwTerminate();
-        errorCallback.release();
+        if (errorCallback != null)
+        {
+            errorCallback.release();
+        }
     }
 
     public static void main(String[] args)

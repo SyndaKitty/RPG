@@ -9,7 +9,6 @@ import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -26,6 +25,7 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWvidmode;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
 public class ScreenManager
@@ -43,14 +43,12 @@ public class ScreenManager
         final ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
         // Create the window
-        window = glfwCreateWindow(GLFWvidmode.width(vidmode), GLFWvidmode.height(vidmode), title, NULL, NULL);
+        window = glfwCreateWindow(GLFWvidmode.width(vidmode), GLFWvidmode.height(vidmode), title,
+                glfwGetPrimaryMonitor(), NULL);
         if (window == NULL)
         {
             throw new RuntimeException("Failed to create the GLFW Window");
         }
-
-        // Center our window
-        glfwSetWindowPos(window, 0, 0);
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
@@ -72,9 +70,11 @@ public class ScreenManager
     public void init()
     {
         GLContext.createFromCurrent();
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);//Black
+        GL11.glViewport(0, 0, 1920, 1080);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);// Black
+        GLUtil.init();
     }
-    
+
     public void update()
     {
         // Clear the framebuffer

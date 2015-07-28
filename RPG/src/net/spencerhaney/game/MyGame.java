@@ -7,7 +7,6 @@ public class MyGame extends Game
     public MyGame()
     {
         super("Game");
-        addObject(new Cube());
     }
     
     @Override
@@ -26,5 +25,11 @@ public class MyGame extends Game
     public void cleanup()
     {
         
+    }
+
+    @Override
+    public void init()
+    {
+        addObject(new Cube());
     }
 }

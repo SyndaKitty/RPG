@@ -14,7 +14,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 import java.nio.ByteBuffer;
 
 //The following code was retrieved from www.LWJGL.org/guide
-public class Example
+public class Glfw
 {
 
     // Strongly reference callback instances
@@ -122,6 +122,6 @@ public class Example
     }
     
     public static void main(String [] args){
-        new Example().run();
+        new Glfw().run();
     }
 }
