@@ -12,7 +12,7 @@ public class MyGame extends Game
     @Override
     public void update()
     {
-        
+    
     }
 
     @Override

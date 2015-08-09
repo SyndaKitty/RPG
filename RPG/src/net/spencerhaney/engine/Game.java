@@ -47,6 +47,7 @@ public abstract class Game
     public void addObject(GameObject o)
     {
         o.setGame(this);
+        o.init();
         objects.add(o);
     }
 }

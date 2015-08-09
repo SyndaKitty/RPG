@@ -1,4 +1,5 @@
 package example;
+
 import org.lwjgl.Sys;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -81,13 +82,13 @@ public class Glfw
 
         // Get the resolution of the primary monitor
         ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        
+
         // Center our window
         glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - WIDTH) / 2, (GLFWvidmode.height(vidmode) - HEIGHT) / 2);
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
-        
+
         // Enable v-sync
         glfwSwapInterval(1);
 
@@ -110,18 +111,19 @@ public class Glfw
         // Run rendering loop until closed
         while (glfwWindowShouldClose(window) == GL_FALSE)
         {
-            //Clear the framebuffer
+            // Clear the framebuffer
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
-            //Swap the color buffers
+
+            // Swap the color buffers
             glfwSwapBuffers(window);
-            
-            //Poll window for events (eg: key callback)
+
+            // Poll window for events (eg: key callback)
             glfwPollEvents();
         }
     }
-    
-    public static void main(String [] args){
+
+    public static void main(String[] args)
+    {
         new Glfw().run();
     }
 }

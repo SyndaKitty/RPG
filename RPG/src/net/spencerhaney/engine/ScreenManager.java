@@ -28,6 +28,8 @@ import org.lwjgl.glfw.GLFWvidmode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 
+import net.spencerhaney.opengl.GLUtil;
+
 public class ScreenManager
 {
     private long window;
@@ -71,17 +73,17 @@ public class ScreenManager
     {
         GLContext.createFromCurrent();
         GL11.glViewport(0, 0, 1920, 1080);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);// Black
+        glClearColor(0.2f, 0.2f, 0.4f, 1.0f);
         GLUtil.init();
     }
 
     public void update()
     {
-        // Clear the framebuffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         // Swap the color buffers
         glfwSwapBuffers(window);
+        
+        // Clear the framebuffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Poll window for events (eg: key callback)
         glfwPollEvents();

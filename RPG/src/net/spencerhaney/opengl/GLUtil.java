@@ -1,8 +1,15 @@
-package net.spencerhaney.engine;
+package net.spencerhaney.opengl;
+
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Scanner;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
+
+import net.spencerhaney.engine.ErrorCodes;
 
 public class GLUtil
 {
@@ -13,25 +20,19 @@ public class GLUtil
 
     public static int vertexShader;
     public static int fragmentShader;
-    public static int program;    
-    
+    public static int program;
+
     public static void init()
     {
-        // Write our vertex shader to return the vec3 position plus a 1f for the w component
-        String vShader = "#version 330 core\n" + "layout (location = 0) in vec3 position;\n" + "void main()\n"
-                + "{\n" + "    gl_Position = vec4(position.x, position.y, position.z, 1.0);\n" + "}";
-
+        String vShader = loadFile(Paths.get("GLSL/vertexShader.glsl"));
         vertexShader = createShader(GL20.GL_VERTEX_SHADER, vShader);
-        
-        // Write our fragment shader to return opaque red-orange
-        String fShader = "#version 330\n" + "out vec4 color;\n" + "void main(){\n"
-                + "    color = vec4(1.0f, 0.5f, 0.0f, 1f);\n" + "}";
 
+        String fShader = loadFile(Paths.get("GLSL/fragmentShader.glsl"));
         fragmentShader = createShader(GL20.GL_FRAGMENT_SHADER, fShader);
-        
+
         program = createProgram(vertexShader, fragmentShader);
     }
-    
+
     public static int createProgram(int... shaders)
     {
         int program = GL20.glCreateProgram();
@@ -46,10 +47,6 @@ public class GLUtil
             String error = GL20.glGetProgramInfoLog(program);
             System.err.printf("Linker failure: %s\n", error);
         }
-//        for (int s : shaders)
-//        {
-//            GL20.glDeleteShader(s);
-//        }
         return program;
     }
 
@@ -90,5 +87,35 @@ public class GLUtil
             System.exit(ErrorCodes.SHADER_COMPILATION);
         }
         return shader;
+    }
+
+    public static void wireframeMode(boolean on)
+    {
+        if (on)
+        {
+            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+        }else
+        {
+            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+        }
+    }
+
+    public static String loadFile(final Path p)
+    {
+        Scanner in = null;
+        try
+        {
+            in = new Scanner(p.toFile());
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        StringBuffer buffer = new StringBuffer();
+        while (in.hasNextLine())
+        {
+            buffer.append(in.nextLine() + "\n");
+        }
+        return buffer.toString();
     }
 }

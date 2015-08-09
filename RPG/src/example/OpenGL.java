@@ -76,15 +76,10 @@ public class OpenGL
 
             //////////////// End////////////////
             //////////////// Prepare the Shader////////////////
-            String vert = "#version 330                                \n"
-                    + "in vec2 position;                            \n"
-                    + "void main(){                                \n"
-                    + "    gl_Position= vec4(position,0,1);        \n"
-                    + "}                                            \n";
-            String frag = "#version 330                                \n"
-                    + "out vec4 out_color;                        \n" + "void main(){                                \n"
-                    + "    out_color= vec4(0f, 1f, 1f, 1f);        \n"
-                    + "}                                            \n";
+            String vert = "#version 330\n" + "in vec2 position;\n" + "void main(){\n"
+                    + "    gl_Position= vec4(position,0,1);\n" + "}\n";
+            String frag = "#version 330\n" + "out vec4 out_color;\n" + "void main(){\n"
+                    + "out_color= vec4(0f, 1f, 1f, 1f);\n" + "}\n";
             int shader = createShaderProgramme(new int[] {GL20.GL_VERTEX_SHADER, GL20.GL_FRAGMENT_SHADER},
                     new String[] {vert, frag});
 

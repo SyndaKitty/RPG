@@ -49,16 +49,17 @@ public class EngineManager
         screen.createFullWindow(game.getTitle());
         
         screen.init();
+        screen.show();
         game.init();
     }
 
     private void loop()
     {
-        screen.show();
         while (screen.isOpen())
         {
             screen.update();
-            game.gameRender();
+            Time.update();
+            game.gameUpdate();
             game.gameRender();
         }
     }
