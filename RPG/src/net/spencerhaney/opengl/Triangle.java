@@ -23,7 +23,7 @@ public class Triangle extends Geometry
         
         vbo = GL15.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STREAM_DRAW);
         GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
         
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
@@ -48,7 +48,7 @@ public class Triangle extends Geometry
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 3);
 
         //Update data
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_DYNAMIC_DRAW);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STREAM_DRAW);
         
         //Cleanup
         GL20.glDisableVertexAttribArray(0);

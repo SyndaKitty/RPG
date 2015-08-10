@@ -1,8 +1,8 @@
 #version 330
+
+in vec4 pass_Color;
 out vec4 color;
 
-varying vec3 fPosition;
-
 void main(){
-	color = vec4(fPosition, 1.0);
+	color = pass_Color;
 }

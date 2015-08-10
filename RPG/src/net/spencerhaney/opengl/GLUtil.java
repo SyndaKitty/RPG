@@ -40,6 +40,12 @@ public class GLUtil
         {
             GL20.glAttachShader(program, s);
         }
+
+        // Position information will be attribute 0
+        GL20.glBindAttribLocation(GLUtil.program, 0, "in_Position");
+        // Color information will be attribute 1
+        GL20.glBindAttribLocation(GLUtil.program, 1, "in_Color");
+
         GL20.glLinkProgram(program);
         int status = GL20.glGetProgrami(program, GL20.GL_LINK_STATUS);
         if (status == GL11.GL_FALSE)
@@ -70,20 +76,20 @@ public class GLUtil
         {
             String error = GL20.glGetShaderInfoLog(shader);
 
-            String ShaderTypeString = null;
+            String shaderTypeString = null;
             switch (shadertype)
             {
                 case GL20.GL_VERTEX_SHADER:
-                    ShaderTypeString = "vertex";
+                    shaderTypeString = "vertex";
                     break;
                 case GL32.GL_GEOMETRY_SHADER:
-                    ShaderTypeString = "geometry";
+                    shaderTypeString = "geometry";
                     break;
                 case GL20.GL_FRAGMENT_SHADER:
-                    ShaderTypeString = "fragment";
+                    shaderTypeString = "fragment";
                     break;
             }
-            System.err.printf("Compile failure in %s shader:\n%s\n", ShaderTypeString, error);
+            System.err.printf("Compile failure in %s shader:\n%s\n", shaderTypeString, error);
             System.exit(ErrorCodes.SHADER_COMPILATION);
         }
         return shader;
@@ -94,7 +100,8 @@ public class GLUtil
         if (on)
         {
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-        }else
+        }
+        else
         {
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         }
