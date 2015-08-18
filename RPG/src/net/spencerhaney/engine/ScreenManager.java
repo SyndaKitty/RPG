@@ -33,6 +33,8 @@ import net.spencerhaney.opengl.GLUtil;
 public class ScreenManager
 {
     private long window;
+    private int width;
+    private int height;
 
     public void createFullWindow(final String title)
     {
@@ -44,8 +46,13 @@ public class ScreenManager
         // Get the resolution of the primary monitor
         final ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
+        width = GLFWvidmode.width(vidmode);
+        height = GLFWvidmode.height(vidmode);
+        
+        
+        
         // Create the window
-        window = glfwCreateWindow(GLFWvidmode.width(vidmode), GLFWvidmode.height(vidmode), title,
+        window = glfwCreateWindow(width, height, title,
                 glfwGetPrimaryMonitor(), NULL);
         if (window == NULL)
         {
@@ -72,7 +79,7 @@ public class ScreenManager
     public void init()
     {
         GLContext.createFromCurrent();
-        GL11.glViewport(0, 0, 1920, 1080);
+        GL11.glViewport(0, 0, 800, 600);
         glClearColor(0.2f, 0.2f, 0.4f, 1.0f);
         GLUtil.init();
     }
@@ -81,7 +88,7 @@ public class ScreenManager
     {
         // Swap the color buffers
         glfwSwapBuffers(window);
-        
+
         // Clear the framebuffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

@@ -6,26 +6,35 @@ import net.spencerhaney.opengl.Quad;
 public class Cube extends GameObject
 {
     private Quad q;
-    
+
     @Override
     public void init()
     {
         q = new Quad();
-        q.init(-0.5f, -0.5f,  0.0f,  1.0f, 
-               -0.5f,  0.5f,  0.0f,  1.0f, 
-                0.5f,  0.5f,  0.0f,  1.0f, 
-                0.5f, -0.5f,  0.0f,  1.0f);
+        //@formatter:off
+        float[] positions = new float[]{
+               -0.5f, -0.5f,  0.0f, 
+               -0.5f,  0.5f,  0.0f, 
+                0.5f,  0.5f,  0.0f, 
+                0.5f, -0.5f,  0.0f};
+        float[] colors = new float[]{
+                1f, 0f, 0f, 1f,
+                0f, 1f, 0f, 1f,
+                0f, 0f, 1f, 1f,
+                1f, 1f, 1f, 1f,};
+        //@formatter:on
+        q.init(positions, colors);
     }
-    
+
     @Override
     public void update()
     {
-        
+
     }
 
     @Override
     public void render()
     {
-       q.render();
+        q.render();
     }
 }

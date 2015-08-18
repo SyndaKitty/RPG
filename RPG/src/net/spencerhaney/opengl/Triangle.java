@@ -15,7 +15,7 @@ public class Triangle extends Geometry
     private int vbo;
     
     public void init(float ... vertices)
-    {
+    {        
         setVertices(vertices);
 
         vao = GL30.glGenVertexArrays();

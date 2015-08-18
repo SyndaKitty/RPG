@@ -5,6 +5,8 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
+import java.io.File;
+
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL11;
 
@@ -47,8 +49,7 @@ public class EngineManager
 
         screen = new ScreenManager();
         screen.createFullWindow(game.getTitle());
-        
-        screen.init();
+        screen.init();        
         screen.show();
         game.init();
     }
@@ -77,6 +78,7 @@ public class EngineManager
 
     public static void main(String[] args)
     {
+        System.setProperty("org.lwjgl.librarypath", new File("lib/native").getAbsolutePath());
         EngineManager engine = new EngineManager();
         Game game = new MyGame();
         engine.run(game);

@@ -24,6 +24,8 @@ public class GLUtil
 
     public static void init()
     {
+        System.out.println("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
+        
         String vShader = loadFile(Paths.get("GLSL/vertexShader.glsl"));
         vertexShader = createShader(GL20.GL_VERTEX_SHADER, vShader);
 
@@ -33,7 +35,7 @@ public class GLUtil
         program = createProgram(vertexShader, fragmentShader);
     }
 
-    public static int createProgram(int... shaders)
+    public static int createProgram(final int... shaders)
     {
         int program = GL20.glCreateProgram();
         for (int s : shaders)
@@ -45,7 +47,9 @@ public class GLUtil
         GL20.glBindAttribLocation(GLUtil.program, 0, "in_Position");
         // Color information will be attribute 1
         GL20.glBindAttribLocation(GLUtil.program, 1, "in_Color");
-
+        //Normal information will be attibute 2 TODO look into linking up
+        GL20.glBindAttribLocation(GLUtil.program, 2, "in_Normal");
+        
         GL20.glLinkProgram(program);
         int status = GL20.glGetProgrami(program, GL20.GL_LINK_STATUS);
         if (status == GL11.GL_FALSE)
@@ -56,7 +60,7 @@ public class GLUtil
         return program;
     }
 
-    public static int createProgram(int[] shaderTypes, String[] shaders)
+    public static int createProgram(final int[] shaderTypes, final String[] shaders)
     {
         int[] shaderIds = new int[shaders.length];
         for (int i = 0; i < shaderIds.length; i++)
@@ -66,7 +70,7 @@ public class GLUtil
         return createProgram(shaderIds);
     }
 
-    public static int createShader(int shadertype, String shaderString)
+    public static int createShader(final int shadertype, final String shaderString)
     {
         int shader = GL20.glCreateShader(shadertype);
         GL20.glShaderSource(shader, shaderString);
@@ -95,7 +99,7 @@ public class GLUtil
         return shader;
     }
 
-    public static void wireframeMode(boolean on)
+    public static void setWireframeMode(final boolean on)
     {
         if (on)
         {
