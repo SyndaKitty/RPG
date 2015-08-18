@@ -48,9 +48,7 @@ public class ScreenManager
 
         width = GLFWvidmode.width(vidmode);
         height = GLFWvidmode.height(vidmode);
-        
-        
-        
+
         // Create the window
         window = glfwCreateWindow(width, height, title,
                 glfwGetPrimaryMonitor(), NULL);
@@ -64,6 +62,11 @@ public class ScreenManager
 
         // Enable v-sync
         glfwSwapInterval(1);
+        
+        GLContext.createFromCurrent();
+        GL11.glViewport(0, 0, width, height);
+        glClearColor(0.2f, 0.2f, 0.4f, 1.0f);
+        GLUtil.init();
     }
 
     public void setKeyCallback(GLFWKeyCallback callback)
@@ -75,15 +78,7 @@ public class ScreenManager
     {
         return glfwWindowShouldClose(window) == GL_FALSE;
     }
-
-    public void init()
-    {
-        GLContext.createFromCurrent();
-        GL11.glViewport(0, 0, 800, 600);
-        glClearColor(0.2f, 0.2f, 0.4f, 1.0f);
-        GLUtil.init();
-    }
-
+    
     public void update()
     {
         // Swap the color buffers

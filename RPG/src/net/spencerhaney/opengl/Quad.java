@@ -9,16 +9,10 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-public class Quad extends Geometry
+public class Quad
 {
-    private static final int SIZE = 4;
-    private static final int STRIDE = 7;
-    private static final int COLOR_OFFSET = 3;
-
     private int vao;
-
     private int vbo;
-    private int cvbo;
 
     private FloatBuffer combinedBuffer;
 
@@ -26,10 +20,20 @@ public class Quad extends Geometry
     private ByteBuffer indicesBuffer;
     private int indicesLength;
 
-    public void init(float[] positions, float[] colors)
+    private Vertex[] vertices;
+
+    /**
+     * Create the necessary OpenGL components to render this Geometry
+     * 
+     * @param vertices
+     *            The vertices in clockwise order
+     */
+    public void init(Vertex... vertices)
     {
+        this.vertices = vertices;
+
         // Setup vertices
-        setVertices(positions, colors);
+        setVertices(vertices);
 
         // Setup indices
         byte[] indices = {0, 2, 1, 0, 3, 2};
@@ -42,22 +46,13 @@ public class Quad extends Geometry
         vao = GL30.glGenVertexArrays();
         GL30.glBindVertexArray(vao);
         {
-
-            // Create a VBO for the vertices
+            // Create a VBO for the positions
             vbo = GL15.glGenBuffers();
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
             {
-                GL15.glBufferData(GL15.GL_ARRAY_BUFFER, combinedBuffer, GL15.GL_STREAM_DRAW);
-                GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, STRIDE * SIZE, 0);
-            }
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-
-            // Create a VBO for the colors
-            cvbo = GL15.glGenBuffers();
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, cvbo);
-            {
                 GL15.glBufferData(GL15.GL_ARRAY_BUFFER, combinedBuffer, GL15.GL_STATIC_DRAW);
-                GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, STRIDE * SIZE, COLOR_OFFSET * SIZE);
+                GL20.glVertexAttribPointer(0, 4, GL11.GL_FLOAT, false, Vertex.STRIDE, 0);
+                GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, Vertex.STRIDE, Vertex.COLOR_OFFEST);
             }
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
@@ -80,25 +75,38 @@ public class Quad extends Geometry
      * @param vertices
      *            The vertices of the rectangle in clockwise order
      */
-    public void setVertices(float[] vertices, float[] colors)
+    public void setVertices(Vertex... vertices)
     {
-        combinedBuffer = BufferUtils.createFloatBuffer(vertices.length + colors.length);
-        int positionIndex = 0;
-        int colorIndex = 0;
-        for (int length = 0; length < vertices.length + colors.length;)
+        combinedBuffer = BufferUtils.createFloatBuffer(vertices.length * Vertex.STRIDE);
+
+        for (Vertex v : vertices)
         {
-            for (int i = 0; i < COLOR_OFFSET; i++)
-            {
-                length++;
-                combinedBuffer.put(vertices[positionIndex++]);
-            }
-            for (int j = 0; j < STRIDE - COLOR_OFFSET; j++)
-            {
-                length++;
-                combinedBuffer.put(colors[colorIndex++]);
-            }
+            combinedBuffer.put(v.getXYZW());
+            combinedBuffer.put(v.getRGBA());
         }
+
         combinedBuffer.flip();
+    }
+
+    public void update()
+    {
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+        ByteBuffer vertexByteBuffer = BufferUtils.createByteBuffer(Vertex.STRIDE);
+        for (int i = 0; i < vertices.length; i++)
+        {
+            FloatBuffer vertexFloatBuffer = vertexByteBuffer.asFloatBuffer();
+            vertexFloatBuffer.rewind();
+            vertexFloatBuffer.put(vertices[i].getElements());
+            vertexFloatBuffer.flip();
+            GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, i * Vertex.STRIDE, vertexByteBuffer);
+        }
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    }
+
+    public void update(Vertex... vertices)
+    {
+        this.vertices = vertices;
+        update();
     }
 
     public void render()

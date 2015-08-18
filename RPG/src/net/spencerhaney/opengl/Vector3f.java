@@ -1,21 +1,49 @@
 package net.spencerhaney.opengl;
 
+import java.util.Arrays;
+
 public class Vector3f
 {
+    public static final Vector3f UP = new Vector3f(0f, 1f, 0f);
+    public static final Vector3f DOWN = new Vector3f(0f, -1f, 0f);
+    public static final Vector3f RIGHT = new Vector3f(1f, 0f, 0f);
+    public static final Vector3f LEFT = new Vector3f(-1f, 0f, 0f);
+    public static final Vector3f TOWARD = new Vector3f(0f, 0f, 1f);
+    public static final Vector3f AWAY = new Vector3f(0f, 0f, -1f);
+    
     private float x;
     private float y;
     private float z;
 
     public Vector3f()
     {
-
+        
     }
 
     public Vector3f(float x, float y, float z)
     {
+        setXYZ(x, y, z);
+    }
+
+    public void setXYZ(float x, float y, float z)
+    {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+    
+    public void setXYZ(float [] xyz)
+    {
+        if(xyz.length == 3)
+        {
+            x = xyz[0];
+            y = xyz[1];
+            z = xyz[2];
+        }
+        else
+        {
+            throw new IllegalArgumentException("Incorrect argument length of " + Arrays.toString(xyz));
+        }
     }
     
     public void setX(float x)
@@ -37,14 +65,19 @@ public class Vector3f
     {
         return x;
     }
-    
+
     public float getY()
     {
         return y;
     }
-    
+
     public float getZ()
     {
         return z;
+    }
+    
+    public String toString()
+    {
+        return Arrays.toString(new Float[]{x, y, z});
     }
 }

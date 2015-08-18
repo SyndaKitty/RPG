@@ -1,7 +1,5 @@
 package net.spencerhaney.engine;
 
-import net.spencerhaney.opengl.Triangle;
-
 public abstract class GameObject
 {
     private float x;
