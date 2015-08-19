@@ -7,11 +7,12 @@ public class Vertex
     // Vertex data
     private float[] xyzw = new float[] {0f, 0f, 0f, 1f};
     private float[] rgba = new float[] {1f, 1f, 1f, 1f};
-
+    private float[] st = new float[] {0f, 0f};
+    
     /**
      * The number of elements/floats the Vertex has
      */
-    public static final int ELEMENTS = 8;
+    public static final int ELEMENTS = 10;
 
     /**
      * The size of each element/float the Vertex has
@@ -28,6 +29,11 @@ public class Vertex
      */
     public static final int COLOR_OFFEST = 4 * SIZE;
 
+    /**
+     * The number of bytes that offset the texture coords
+     */
+    public static final int TEXTURE_OFFSET = 8 * SIZE;
+    
     public Vertex(float x, float y, float z, float r, float g, float b, float a)
     {
         setXYZ(x, y, z);
@@ -62,6 +68,11 @@ public class Vertex
         this.setRGBA(r, g, b, 1f);
     }
 
+    public void setST(float s, float t)
+    {
+        this.st = new float[] {s, t};
+    }
+    
     public void setXYZW(float x, float y, float z, float w)
     {
         this.xyzw = new float[] {x, y, z, w};
@@ -83,6 +94,11 @@ public class Vertex
         return new float[] {this.rgba[0], this.rgba[1], this.rgba[2], this.rgba[3]};
     }
 
+    public float[] getST()
+    {
+        return new float[] {this.st[0], this.st[1]};
+    }
+    
     public float[] getElements()
     {
         float[] elements = new float[ELEMENTS];
@@ -94,6 +110,8 @@ public class Vertex
         elements[5] = rgba[1];
         elements[6] = rgba[2];
         elements[7] = rgba[3];
+        elements[8] = st[0];
+        elements[9] = st[1];
         return elements;
     }
 
