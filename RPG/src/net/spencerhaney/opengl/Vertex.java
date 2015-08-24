@@ -12,7 +12,7 @@ public class Vertex
     /**
      * The number of elements/floats the Vertex has
      */
-    public static final int ELEMENTS = 10;
+    public static final int ELEMENTS = 8;
 
     /**
      * The size of each element/float the Vertex has
@@ -110,8 +110,8 @@ public class Vertex
         elements[5] = rgba[1];
         elements[6] = rgba[2];
         elements[7] = rgba[3];
-        elements[8] = st[0];
-        elements[9] = st[1];
+//        elements[8] = st[0];
+//        elements[9] = st[1];
         return elements;
     }
 

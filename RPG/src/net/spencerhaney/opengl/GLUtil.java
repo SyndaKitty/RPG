@@ -10,21 +10,22 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
 
 import net.spencerhaney.engine.ErrorCodes;
+import net.spencerhaney.engine.Logging;
 
 public class GLUtil
 {
-    private GLUtil()
-    {
-        // Do nothing
-    }
-
     public static int vertexShader;
     public static int fragmentShader;
     public static int program;
 
+    private GLUtil()
+    {
+        // Do nothing
+    }
+    
     public static void init()
     {
-        System.out.println("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
+        Logging.fine("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
         
         String vShader = loadFile(Paths.get("GLSL/vertexShader.glsl"));
         vertexShader = createShader(GL20.GL_VERTEX_SHADER, vShader);
@@ -110,7 +111,7 @@ public class GLUtil
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         }
     }
-
+    
     public static String loadFile(final Path p)
     {
         Scanner in = null;

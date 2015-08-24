@@ -34,8 +34,10 @@ public class EngineManager
 
     private void init()
     {
-        Logging.fine(this, "Initiating engine.");
-
+        Logging.init();
+        Logging.fine("Initiating engine.");
+        
+        Resources.init();
         Time.init();
 
         // Setup error callback. Print to System.err
@@ -44,7 +46,9 @@ public class EngineManager
         // Initialize GLFW
         if (glfwInit() != GL11.GL_TRUE)
         {
-            throw new IllegalStateException("Unable to initialize GLFW");
+            IllegalStateException e = new IllegalStateException("Unable to initialize GLFW");
+            Logging.severe(e);
+            throw e;
         }
 
         screen = new ScreenManager();
@@ -66,7 +70,7 @@ public class EngineManager
 
     private void cleanup()
     {
-        Logging.fine(this, "Stopping engine.");
+        Logging.fine("Stopping engine.");
         game.cleanup();
         glfwTerminate();
         if (errorCallback != null)
