@@ -11,6 +11,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL11;
 
 import net.spencerhaney.game.MyGame;
+import net.spencerhaney.opengl.GLUtil;
 
 public class EngineManager
 {
@@ -35,7 +36,7 @@ public class EngineManager
     private void init()
     {
         Logging.init();
-        Logging.fine("Initiating engine.");
+        Logging.info("Initiating engine.");
         
         Resources.init();
         Time.init();
@@ -59,6 +60,7 @@ public class EngineManager
 
     private void loop()
     {
+        Logging.info("Starting engine.");
         while (screen.isOpen())
         {
             screen.update();
@@ -70,8 +72,9 @@ public class EngineManager
 
     private void cleanup()
     {
-        Logging.fine("Stopping engine.");
+        Logging.info("Stopping engine.");
         game.cleanup();
+        GLUtil.cleanup();
         glfwTerminate();
         if (errorCallback != null)
         {

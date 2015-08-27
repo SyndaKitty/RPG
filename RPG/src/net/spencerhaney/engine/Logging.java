@@ -14,54 +14,44 @@ public class Logging
 
     private enum Level
     {
-        ALL, FINEST, FINE, INFO, WARNING, SEVERE, NONE;
+        ALL, DEBUG, FINEST, FINE, INFO, WARNING, SEVERE, NONE;
     }
 
     public static void init()
     {
         stream = System.out;
         errorStream = System.err;
-        level = Level.FINEST;
+        level = Level.ALL;
+    }
+
+    public static void debug(String message)
+    {
+        printMessage(Level.DEBUG, message);
     }
 
     public static void finest(String message)
     {
-        if (level.compareTo(Level.FINEST) <= 0)
-        {
-            stream.printf(OUTPUT, Level.FINEST, getTimestamp(), message);
-        }
+        printMessage(Level.FINEST, message);
     }
 
     public static void fine(String message)
     {
-        if (level.compareTo(Level.FINE) <= 0)
-        {
-            stream.printf(OUTPUT, Level.FINE, getTimestamp(), message);
-        }
+        printMessage(Level.FINE, message);
     }
 
     public static void info(String message)
     {
-        if (level.compareTo(Level.INFO) <= 0)
-        {
-            stream.printf(OUTPUT, Level.INFO, getTimestamp(), message);
-        }
+        printMessage(Level.INFO, message);
     }
 
     public static void warning(String message)
     {
-        if (level.compareTo(Level.WARNING) <= 0)
-        {
-            stream.printf(OUTPUT, Level.WARNING, getTimestamp(), message);
-        }
+        printMessage(Level.WARNING, message);
     }
 
     public static void severe(String message)
     {
-        if (level.compareTo(Level.SEVERE) <= 0)
-        {
-            stream.printf(OUTPUT, Level.SEVERE, getTimestamp(), message);
-        }
+        printMessage(Level.SEVERE, message);
     }
 
     public static void warning(String message, Throwable t)
@@ -117,9 +107,17 @@ public class Logging
             }
         }
     }
-    
+
     private static String getTimestamp()
     {
         return new Timestamp(new Date().getTime()).toString();
+    }
+
+    private static void printMessage(Level t, String message)
+    {
+        if (level.compareTo(t) <= 0)
+        {
+            stream.printf(OUTPUT, t, getTimestamp(), message);
+        }    
     }
 }

@@ -1,7 +1,10 @@
 package net.spencerhaney.game;
 
+import org.lwjgl.opengl.GL13;
+
 import net.spencerhaney.engine.GameObject;
 import net.spencerhaney.engine.Time;
+import net.spencerhaney.opengl.GLUtil;
 import net.spencerhaney.opengl.Quad;
 import net.spencerhaney.opengl.Vertex;
 
@@ -16,22 +19,24 @@ public class Cube extends GameObject
     public void init()
     {
         quad = new Quad();
+        
+        int texture = GLUtil.createTexture("res\\images\\uvgrid02.png", GL13.GL_TEXTURE0);
         vertices = new Vertex[] {
             //@formatter:off
-            new Vertex(-0.5f, -0.5f,  0.0f, 1f, 0f, 0f, 1f),
-            new Vertex(-0.5f,  0.5f,  0.0f, 0f, 1f, 0f, 1f),
-            new Vertex( 0.5f,  0.5f,  0.0f, 0f, 0f, 1f, 1f),
-            new Vertex( 0.5f, -0.5f,  0.0f, 1f, 1f, 1f, 1f)
+            new Vertex(-0.5f,  0.5f, 0.0f, 1, 0, 1, 0, 1, 0, 0),
+            new Vertex(-0.5f, -0.5f, 0.0f, 1, 1, 0, 0, 1, 0, 1),
+            new Vertex( 0.5f, -0.5f, 0.0f, 1, 1, 1, 1, 1, 1, 1),
+            new Vertex( 0.5f,  0.5f, 0.0f, 1, 0, 0, 1, 1, 1, 0),
             //@formatter:on
         };
-        quad.init(vertices);
+        quad.init(texture, vertices);
     }
 
     @Override
     public void update()
     {
         time += Time.getDelta();
-        time = (float)(time % (Math.PI * 2)); // Normalize time
+//        time = (float)(time % (Math.PI * 2)); // Normalize time
         float q = (float)(Math.PI / 2);
         float x0 = (float)Math.cos(time) * 0.5f;
         float y0 = (float)Math.sin(time) * 0.5f;
@@ -47,10 +52,10 @@ public class Cube extends GameObject
 
         vertices = new Vertex[] {
                 //@formatter:off
-                new Vertex(x0, y0, 0.0f, x0 + 0.5f, 0f, 0f, 1f),
-                new Vertex(x1, y1, 0.0f, 0f, x1 + 0.5f, 0f, 1f),
-                new Vertex(x2, y2, 0.0f, 0f, 0f, x2 + 0.5f, 1f),
-                new Vertex(x3, y3, 0.0f, x3 + 0.5f, x3 + 0.5f, x3 + 0.5f, 1f),
+                new Vertex(x0, y0, 0.0f, 1, .5f + 0.5f, 0f, 0f, 1f, 0, 0),
+                new Vertex(x1, y1, 0.0f, 1, 0f, x1 + 0.5f, 0f, 1f, 0, 1),
+                new Vertex(x2, y2, 0.0f, 1, 0f, 0f, x2 + 0.5f, 1f, 1, 1),
+                new Vertex(x3, y3, 0.0f, 1, x3 + 0.5f, x3 + 0.5f, x3 + 0.5f, 1f, 1, 0),
                 //@formatter:on
         };
         quad.update(vertices);

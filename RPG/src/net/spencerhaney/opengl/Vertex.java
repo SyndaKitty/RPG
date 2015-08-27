@@ -12,7 +12,7 @@ public class Vertex
     /**
      * The number of elements/floats the Vertex has
      */
-    public static final int ELEMENTS = 8;
+    public static final int ELEMENTS = 10;
 
     /**
      * The size of each element/float the Vertex has
@@ -46,12 +46,20 @@ public class Vertex
         setRGBA(r, g, b, a);
     }
 
+    public Vertex(float x, float y, float z, float w, float r, float g, float b, float a, float s, float t)
+    {
+        setXYZW(x, y, z, w);
+        setRGBA(r, g, b, a);
+        setST(s, t);
+    }
+    
     public Vertex(float x, float y, float z, float r, float g, float b)
     {
         setXYZ(x, y, z);
         setRGB(r, g, b);
     }
 
+    
     public Vertex()
     {
         // Do nothing
@@ -110,13 +118,14 @@ public class Vertex
         elements[5] = rgba[1];
         elements[6] = rgba[2];
         elements[7] = rgba[3];
-//        elements[8] = st[0];
-//        elements[9] = st[1];
+        elements[8] = st[0];
+        elements[9] = st[1];
         return elements;
     }
 
+    @Override
     public String toString()
     {
-        return Arrays.toString(xyzw) + Arrays.toString(rgba);
+        return Arrays.toString(xyzw) + Arrays.toString(rgba) + Arrays.toString(st);
     }
 }

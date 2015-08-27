@@ -12,8 +12,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
@@ -21,14 +19,15 @@ public class Resources
 {
     public static final String RESOURCE_FOLDER = "res";
 
-    private static Map<String, ByteBuffer> resources;
+    //TODO map resources to a File key
+    private static Map<String, Object[]> resources;
 
     /**
      * Loads all of the resources in the res folder that can be recognized.
      */
     public static void init()
     {
-        resources = new HashMap<String, ByteBuffer>();
+        resources = new HashMap<String, Object[]>();
         Path resourceFolder = Paths.get(RESOURCE_FOLDER);
         try
         {
@@ -38,6 +37,9 @@ public class Resources
         {
             e.printStackTrace();
         }
+        
+        Logging.info("Resources loaded successfully");
+        Logging.info(resources.toString());
     }
 
     private static void loadDirectory(Path directory) throws IOException
@@ -73,7 +75,13 @@ public class Resources
         }
     }
 
-    public static ByteBuffer loadPNG(final String filePath) throws IOException
+    /**
+     * Load and decode a PNG file. Store in an Object array in the order, {ByteBuffer, width, height}
+     * @param filePath The file path of the texture to laod
+     * @return Object array[] {Bytebuffer bytes, int width, int height}
+     * @throws IOException 
+     */
+    public static Object[] loadPNG(final String filePath) throws IOException
     {
         InputStream in = new FileInputStream(filePath);
         PNGDecoder decoder = new PNGDecoder(in);
@@ -83,6 +91,11 @@ public class Resources
         final ByteBuffer buffer = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
         decoder.decode(buffer, decoder.getWidth() * 4, Format.RGBA);
         buffer.flip();
-        return buffer;
+        return new Object[]{buffer, decoder.getWidth(), decoder.getHeight()};
+    }
+    
+    public static Object[] getResource(final String filePath)
+    {
+        return resources.get(filePath);
     }
 }

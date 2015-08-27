@@ -1,8 +1,13 @@
-#version 330
+#version 330 core
 
-in vec3 pass_Color;
-out vec4 color;
+uniform sampler2D texture_diffuse;
 
-void main(){
-	color = vec4(pass_Color, 1.0f);
+in vec4 pass_Color;
+in vec2 pass_TextureCoord;
+
+out vec4 out_Color;
+
+void main(void) {
+	out_Color = pass_Color;
+	//out_Color = texture(texture_diffuse, pass_TextureCoord);
 }

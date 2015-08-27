@@ -1,16 +1,21 @@
 package net.spencerhaney.opengl;
 
 import java.io.FileNotFoundException;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 
 import net.spencerhaney.engine.ErrorCodes;
 import net.spencerhaney.engine.Logging;
+import net.spencerhaney.engine.Resources;
 
 public class GLUtil
 {
@@ -18,15 +23,17 @@ public class GLUtil
     public static int fragmentShader;
     public static int program;
 
+    private static ArrayList<Integer> loadedTextures = new ArrayList<Integer>();
+    
     private GLUtil()
     {
         // Do nothing
     }
-    
+
     public static void init()
     {
         Logging.fine("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
-        
+
         String vShader = loadFile(Paths.get("GLSL/vertexShader.glsl"));
         vertexShader = createShader(GL20.GL_VERTEX_SHADER, vShader);
 
@@ -34,6 +41,71 @@ public class GLUtil
         fragmentShader = createShader(GL20.GL_FRAGMENT_SHADER, fShader);
 
         program = createProgram(vertexShader, fragmentShader);
+    }
+
+    public static void cleanup()
+    {
+        //Delete the textures
+        for(int texture : loadedTextures)
+        {
+            GL11.glDeleteTextures(texture);
+        }
+        
+        //Delete the shaders
+        GL20.glUseProgram(program);
+        GL20.glDetachShader(program, vertexShader);
+        GL20.glDetachShader(program, fragmentShader);
+        
+        GL20.glDeleteShader(vertexShader);
+        GL20.glDeleteShader(fragmentShader);
+        GL20.glDeleteProgram(program);
+    }
+
+    public static int createTexture(final String fileName, final int textureUnit)
+    {
+        Object[] textureResource = Resources.getResource(fileName);
+        
+        ByteBuffer textureBytes = null;
+        int width = 0;
+        int height = 0;
+        
+        try
+        {
+            textureBytes = (ByteBuffer)textureResource[0];
+            width = (int)textureResource[1];
+            height = (int)textureResource[2];
+        }
+        catch (NullPointerException | ClassCastException | ArrayIndexOutOfBoundsException e)
+        {
+            Logging.severe("Missing texture: " + fileName, e);
+            System.exit(ErrorCodes.MISSING_TEXTURE);
+        }
+
+        // Create a new texture object in memory and bind it
+        int texture = GL11.glGenTextures();
+        GL13.glActiveTexture(textureUnit);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+
+        //Store the texture so that it can safely be destroyed
+        loadedTextures.add(texture);
+        
+        // All RGB bytes are aligned to each other and each component is 1 byte
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+
+        // Upload the texture data and generate mip maps (for scaling)
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
+                textureBytes);
+        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+
+        // Setup the ST coordinate system
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+
+        // Setup what to do when the texture has to be scaled
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
+
+        return texture;
     }
 
     public static int createProgram(final int... shaders)
@@ -48,15 +120,15 @@ public class GLUtil
         GL20.glBindAttribLocation(GLUtil.program, 0, "in_Position");
         // Color information will be attribute 1
         GL20.glBindAttribLocation(GLUtil.program, 1, "in_Color");
-        //Normal information will be attibute 2 TODO look into linking up
-        GL20.glBindAttribLocation(GLUtil.program, 2, "in_Normal");
-        
+        // Texture coord information will be attribute 2
+        GL20.glBindAttribLocation(GLUtil.program, 2, "in_TextureCoord");
+
         GL20.glLinkProgram(program);
         int status = GL20.glGetProgrami(program, GL20.GL_LINK_STATUS);
         if (status == GL11.GL_FALSE)
         {
             String error = GL20.glGetProgramInfoLog(program);
-            System.err.printf("Linker failure: %s\n", error);
+            Logging.severe(String.format("Linker failure: %s\n", error));
         }
         return program;
     }
@@ -94,7 +166,7 @@ public class GLUtil
                     shaderTypeString = "fragment";
                     break;
             }
-            System.err.printf("Compile failure in %s shader:\n%s\n", shaderTypeString, error);
+            Logging.severe(String.format("Compile failure in %s shader:\n%s\n", shaderTypeString, error));
             System.exit(ErrorCodes.SHADER_COMPILATION);
         }
         return shader;
@@ -111,7 +183,7 @@ public class GLUtil
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
         }
     }
-    
+
     public static String loadFile(final Path p)
     {
         Scanner in = null;
