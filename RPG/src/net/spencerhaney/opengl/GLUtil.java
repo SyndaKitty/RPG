@@ -53,11 +53,13 @@ public class GLUtil
         
         //Delete the shaders
         GL20.glUseProgram(program);
+        
         GL20.glDetachShader(program, vertexShader);
         GL20.glDetachShader(program, fragmentShader);
         
         GL20.glDeleteShader(vertexShader);
         GL20.glDeleteShader(fragmentShader);
+        
         GL20.glDeleteProgram(program);
     }
 
@@ -85,44 +87,45 @@ public class GLUtil
         int texture = GL11.glGenTextures();
         GL13.glActiveTexture(textureUnit);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-
-        //Store the texture so that it can safely be destroyed
-        loadedTextures.add(texture);
-        
+         
         // All RGB bytes are aligned to each other and each component is 1 byte
         GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-
+         
         // Upload the texture data and generate mip maps (for scaling)
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
-                textureBytes);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, width, height, 0, 
+                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, textureBytes);
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-
+         
         // Setup the ST coordinate system
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-
+         
         // Setup what to do when the texture has to be scaled
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, 
+                GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, 
+                GL11.GL_LINEAR_MIPMAP_LINEAR);
 
         return texture;
     }
 
     public static int createProgram(final int... shaders)
     {
-        int program = GL20.glCreateProgram();
-        for (int s : shaders)
-        {
-            GL20.glAttachShader(program, s);
-        }
-
-        // Position information will be attribute 0
+        //Position information will be attribute 0
         GL20.glBindAttribLocation(GLUtil.program, 0, "in_Position");
         // Color information will be attribute 1
         GL20.glBindAttribLocation(GLUtil.program, 1, "in_Color");
         // Texture coord information will be attribute 2
         GL20.glBindAttribLocation(GLUtil.program, 2, "in_TextureCoord");
-
+        // Normal vector will be attribute 3
+        GL20.glBindAttribLocation(GLUtil.program, 3, "in_Normal");
+        
+        int program = GL20.glCreateProgram();
+        for (int s : shaders)
+        {
+            GL20.glAttachShader(program, s);
+        }
+        
         GL20.glLinkProgram(program);
         int status = GL20.glGetProgrami(program, GL20.GL_LINK_STATUS);
         if (status == GL11.GL_FALSE)

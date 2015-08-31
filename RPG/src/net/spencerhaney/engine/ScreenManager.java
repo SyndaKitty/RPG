@@ -1,6 +1,5 @@
 package net.spencerhaney.engine;
 
-import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
@@ -41,8 +40,7 @@ public class ScreenManager
         // Configure our window
         glfwDefaultWindowHints(); // Defaults
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // Stay hidden after creation
-        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); // Not re-sizable
-
+        
         // Get the resolution of the primary monitor
         final ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 

@@ -10,8 +10,14 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-public class Quad
+import net.spencerhaney.engine.EngineManager;
+import net.spencerhaney.engine.ErrorCodes;
+import net.spencerhaney.engine.Logging;
+
+public class Face
 {
+    private static final int MAX_SIDES = Byte.MAX_VALUE - Byte.MIN_VALUE;
+    
     private int vao;
     private int vbo;
 
@@ -20,38 +26,37 @@ public class Quad
     private int ivbo;
     private ByteBuffer indicesBuffer;
     private int indicesLength;
-
+    
+    private Vector3f normal;
     private Vertex[] vertices;
-    
     private int texture;
-    
     /**
      * Create the necessary OpenGL components to render this Geometry
      * 
      * @param vertices
-     *            The vertices in clockwise order
+     *            The vertices in counter-clockwise order
      */
-    public void init(int texture, Vertex... vertices)
+    public void init(Vector3f normal, Vertex... vertices)
     {
-        this.texture = texture;
+        texture = GLUtil.createTexture("res\\images\\stone.png", GL13.GL_TEXTURE0);
+        this.normal = normal;
+        this.vertices = vertices.clone();
         
-        this.vertices = vertices;
-
         // Setup vertices
         setVertices(vertices);
 
         // Setup indices
-        byte[] indices = {0, 1, 2, 0, 3, 2};
+        byte[] indices = indexSequence(vertices.length);
         indicesLength = indices.length;
         indicesBuffer = BufferUtils.createByteBuffer(indicesLength);
         indicesBuffer.put(indices);
         indicesBuffer.flip();
-        
+
         // Create a vertex buffer object
         vao = GL30.glGenVertexArrays();
         GL30.glBindVertexArray(vao);
         {
-            
+
             // Create a VBO for the positions
             vbo = GL15.glGenBuffers();
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
@@ -60,6 +65,7 @@ public class Quad
                 GL20.glVertexAttribPointer(0, 4, GL11.GL_FLOAT, false, Vertex.STRIDE, 0);
                 GL20.glVertexAttribPointer(1, 4, GL11.GL_FLOAT, false, Vertex.STRIDE, Vertex.COLOR_OFFEST);
                 GL20.glVertexAttribPointer(2, 2, GL11.GL_FLOAT, false, Vertex.STRIDE, Vertex.TEXTURE_OFFSET);
+                GL20.glVertexAttribPointer(3, 3, GL11.GL_FLOAT, false, Vertex.STRIDE, Vertex.NORMAL_OFFSET);
             }
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
@@ -84,18 +90,13 @@ public class Quad
      */
     public void setVertices(Vertex... vertices)
     {
-        for(Vertex v : vertices)
-        {
-            System.out.println(v.toString());
-        }
-        
         combinedBuffer = BufferUtils.createFloatBuffer(vertices.length * Vertex.STRIDE);
 
         for (Vertex v : vertices)
         {
-            combinedBuffer.put(v.getElements());
+            combinedBuffer.put(v.getElements(normal));
         }
-
+        
         combinedBuffer.flip();
     }
 
@@ -107,15 +108,21 @@ public class Quad
         {
             FloatBuffer vertexFloatBuffer = vertexByteBuffer.asFloatBuffer();
             vertexFloatBuffer.rewind();
-            vertexFloatBuffer.put(vertices[i].getElements());
+            vertexFloatBuffer.put(vertices[i].getElements(normal));
             vertexFloatBuffer.flip();
             GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, i * Vertex.STRIDE, vertexByteBuffer);
         }
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
-    public void update(Vertex... vertices)
-    {
+    public void update(Vector3f normal, Vertex... vertices)
+    {   
+        if(this.vertices.length != vertices.length)
+        {
+            Logging.severe(new IllegalArgumentException("The number of vertices originally in this object does not match the amount given when updated"));
+            EngineManager.errorStop(ErrorCodes.FACE_VERTICES_SIZE_MISTMATCH);
+        }
+        this.normal = normal;
         this.vertices = vertices;
         update();
     }
@@ -124,12 +131,16 @@ public class Quad
     {
         GL20.glUseProgram(GLUtil.program);
         {
+            // Bind the texture
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+            
             GL30.glBindVertexArray(vao);
             {
                 GL20.glEnableVertexAttribArray(0);
                 GL20.glEnableVertexAttribArray(1);
+                GL20.glEnableVertexAttribArray(2);
+                GL20.glEnableVertexAttribArray(3);
 
                 GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ivbo);
                 {
@@ -145,5 +156,33 @@ public class Quad
             GL30.glBindVertexArray(0);
         }
         GL20.glUseProgram(0);
+    }
+
+    /**
+     * Generate a sequence of indices that will tesselate a polygon with a given number of vertices
+     * 
+     * @param vertices
+     *            The number of vertices on the polygon that this sequence will tesselate
+     * @return A sequence of indices that will divide any polygon into a number of triangles (FI: 0, 1, 2, 0, 2, 3 will
+     *         split a square into two triangles)
+     */
+    public static byte[] indexSequence(int vertices)
+    {
+        if(vertices > MAX_SIDES)
+        {
+            Logging.severe(new IllegalArgumentException("Size of vertices too large: " + vertices + ". Must not exceed " + MAX_SIDES));
+            EngineManager.errorStop(ErrorCodes.POLYGON_SIDES_TOO_LARGE);
+        }
+        
+        byte[] sequence = new byte[vertices * 3];
+
+        for (int i = 0; i < vertices; i++)
+        {
+            sequence[3 * i + 0] = 0;
+            sequence[3 * i + 1] = (byte)(i + 1);
+            sequence[3 * i + 2] = (byte)(i + 2);
+        }
+
+        return sequence;
     }
 }

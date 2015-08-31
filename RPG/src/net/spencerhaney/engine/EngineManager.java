@@ -15,13 +15,13 @@ import net.spencerhaney.opengl.GLUtil;
 
 public class EngineManager
 {
-    private GLFWErrorCallback errorCallback;
-    private ScreenManager screen;
-    private Game game;
+    private static GLFWErrorCallback errorCallback;
+    private static ScreenManager screen;
+    private static Game game;
 
-    public void run(Game game)
+    public static void run(Game game)
     {
-        this.game = game;
+        EngineManager.game = game;
         try
         {
             init();
@@ -33,7 +33,7 @@ public class EngineManager
         }
     }
 
-    private void init()
+    private static void init()
     {
         Logging.init();
         Logging.info("Initiating engine.");
@@ -58,7 +58,7 @@ public class EngineManager
         game.init();
     }
 
-    private void loop()
+    private static void loop()
     {
         Logging.info("Starting engine.");
         while (screen.isOpen())
@@ -70,7 +70,7 @@ public class EngineManager
         }
     }
 
-    private void cleanup()
+    private static void cleanup()
     {
         Logging.info("Stopping engine.");
         game.cleanup();
@@ -82,11 +82,16 @@ public class EngineManager
         }
     }
 
+    public static void errorStop(int errorCode)
+    {
+        cleanup();
+        System.exit(errorCode);
+    }
+    
     public static void main(String[] args)
     {
         System.setProperty("org.lwjgl.librarypath", new File("lib/native").getAbsolutePath());
-        EngineManager engine = new EngineManager();
         Game game = new MyGame();
-        engine.run(game);
+        EngineManager.run(game);
     }
 }

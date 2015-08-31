@@ -11,8 +11,9 @@ public class Vertex
     
     /**
      * The number of elements/floats the Vertex has
+     * x, y, z, w, r, g, b, a, s, t, normalx, normaly, normalz
      */
-    public static final int ELEMENTS = 10;
+    public static final int ELEMENTS = 13;
 
     /**
      * The size of each element/float the Vertex has
@@ -33,6 +34,23 @@ public class Vertex
      * The number of bytes that offset the texture coords
      */
     public static final int TEXTURE_OFFSET = 8 * SIZE;
+    
+    /**
+     * The number of bytes that offset the normal values
+     */
+    public static final int NORMAL_OFFSET = 10 * SIZE;
+    
+    
+    public Vertex(float x, float y, float z)
+    {
+        setXYZ(x, y, z);
+    }
+    
+    public Vertex(float x, float y, float z, float s, float t)
+    {
+        setXYZ(x, y, z);
+        setST(s, t);
+    }
     
     public Vertex(float x, float y, float z, float r, float g, float b, float a)
     {
@@ -107,7 +125,7 @@ public class Vertex
         return new float[] {this.st[0], this.st[1]};
     }
     
-    public float[] getElements()
+    public float[] getElements(Vector3f normal)
     {
         float[] elements = new float[ELEMENTS];
         elements[0] = xyzw[0];
@@ -120,6 +138,9 @@ public class Vertex
         elements[7] = rgba[3];
         elements[8] = st[0];
         elements[9] = st[1];
+        elements[10]= normal.getX();
+        elements[11]= normal.getY();
+        elements[12]= normal.getZ();
         return elements;
     }
 

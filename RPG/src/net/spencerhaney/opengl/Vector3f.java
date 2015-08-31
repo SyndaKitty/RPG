@@ -8,7 +8,15 @@ public class Vector3f
     public static final Vector3f DOWN = new Vector3f(0f, -1f, 0f);
     public static final Vector3f RIGHT = new Vector3f(1f, 0f, 0f);
     public static final Vector3f LEFT = new Vector3f(-1f, 0f, 0f);
+    
+    /**
+     * The normalized vector that points toward the camera.
+     */
     public static final Vector3f TOWARD = new Vector3f(0f, 0f, 1f);
+    
+    /**
+     * The normalized vector that points away from the camera.
+     */
     public static final Vector3f AWAY = new Vector3f(0f, 0f, -1f);
     
     private float x;
@@ -74,6 +82,11 @@ public class Vector3f
     public float getZ()
     {
         return z;
+    }
+    
+    public float[] getXYZ()
+    {
+        return new float[]{x, y, z};
     }
     
     public String toString()

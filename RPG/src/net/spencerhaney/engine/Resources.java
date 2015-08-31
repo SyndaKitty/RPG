@@ -39,7 +39,6 @@ public class Resources
         }
         
         Logging.info("Resources loaded successfully");
-        Logging.info(resources.toString());
     }
 
     private static void loadDirectory(Path directory) throws IOException
