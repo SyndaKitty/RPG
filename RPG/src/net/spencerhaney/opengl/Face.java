@@ -29,7 +29,14 @@ public class Face
     
     private Vector3f normal;
     private Vertex[] vertices;
-    private int texture;
+    private Integer texture;
+    
+    public void init(Vector3f normal, int texture, Vertex ... vertices)
+    {
+        this.texture = texture;
+        init(normal, vertices);
+    }
+    
     /**
      * Create the necessary OpenGL components to render this Geometry
      * 
@@ -38,7 +45,6 @@ public class Face
      */
     public void init(Vector3f normal, Vertex... vertices)
     {
-        texture = GLUtil.createTexture("res\\images\\stone.png", GL13.GL_TEXTURE0);
         this.normal = normal;
         this.vertices = vertices.clone();
         
@@ -129,12 +135,18 @@ public class Face
 
     public void render()
     {
-        GL20.glUseProgram(GLUtil.program);
+        if(texture == null)
         {
-            // Bind the texture
+            GL20.glUseProgram(GLUtil.program);
+        }
+        else
+        {
+            GL20.glUseProgram(GLUtil.textureProgram);
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-            
+        }
+        {
+            // Bind the texture
             GL30.glBindVertexArray(vao);
             {
                 GL20.glEnableVertexAttribArray(0);

@@ -144,6 +144,106 @@ public class Vertex
         return elements;
     }
 
+    public float getX()
+    {
+        return xyzw[0];
+    }
+    
+    public float getY()
+    {
+        return xyzw[1];
+    }
+    
+    public float getZ()
+    {
+        return xyzw[2];
+    }
+    
+    public float getW()
+    {
+        return xyzw[3];
+    }
+    
+    public float getR()
+    {
+        return rgba[0];
+    }
+    
+    public float getG()
+    {
+        return rgba[1];
+    }
+    
+    public float getB()
+    {
+        return rgba[2];
+    }
+    
+    public float getA()
+    {
+        return rgba[3];
+    }
+    
+    public float getS()
+    {
+        return st[0];
+    }
+    
+    public float getT()
+    {
+        return st[1];
+    }
+    
+    public void setX(float x)
+    {
+        xyzw = new float[]{x, getY(), getZ(), getW()};
+    }
+    
+    public void setY(float y)
+    {
+        xyzw = new float[]{getX(), y, getZ(), getW()};
+    }
+    
+    public void setZ(float z)
+    {
+        xyzw = new float[]{getX(), getY(), z, getW()};
+    }
+    
+    public void setW(float w)
+    {
+        xyzw = new float[]{getX(), getY(), getZ(), w};
+    }
+    
+    public void setR(float r)
+    {
+        rgba = new float[]{r, getG(), getB(), getA()};
+    }
+    
+    public void setG(float g)
+    {
+        rgba = new float[]{getR(), g, getB(), getA()};
+    }
+    
+    public void setB(float b)
+    {
+        rgba = new float[]{getR(), getG(), b, getA()};
+    }
+    
+    public void setA(float a)
+    {
+        rgba = new float[]{getR(), getG(), getB(), a};
+    }
+    
+    public void setS(float s)
+    {
+        st = new float[]{s, getT()};
+    }
+    
+    public void setT(float t)
+    {
+        st = new float[]{getS(), t};
+    }
+    
     @Override
     public String toString()
     {

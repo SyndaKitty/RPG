@@ -40,7 +40,7 @@ public class ScreenManager
         // Configure our window
         glfwDefaultWindowHints(); // Defaults
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // Stay hidden after creation
-        
+
         // Get the resolution of the primary monitor
         final ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
@@ -48,8 +48,7 @@ public class ScreenManager
         height = GLFWvidmode.height(vidmode);
 
         // Create the window
-        window = glfwCreateWindow(width, height, title,
-                glfwGetPrimaryMonitor(), NULL);
+        window = glfwCreateWindow(width, height, title, glfwGetPrimaryMonitor(), NULL);
         if (window == NULL)
         {
             throw new RuntimeException("Failed to create the GLFW Window");
@@ -60,7 +59,7 @@ public class ScreenManager
 
         // Enable v-sync
         glfwSwapInterval(1);
-        
+
         GLContext.createFromCurrent();
         GL11.glViewport(0, 0, width, height);
         glClearColor(0.2f, 0.2f, 0.4f, 1.0f);
@@ -76,9 +75,9 @@ public class ScreenManager
     {
         return glfwWindowShouldClose(window) == GL_FALSE;
     }
-    
+
     public void update()
-    {
+    {   
         // Swap the color buffers
         glfwSwapBuffers(window);
 

@@ -21,8 +21,10 @@ public class GLUtil
 {
     public static int vertexShader;
     public static int fragmentShader;
+    public static int textureFragmentShader;
     public static int program;
-
+    public static int textureProgram;
+    
     private static ArrayList<Integer> loadedTextures = new ArrayList<Integer>();
     
     private GLUtil()
@@ -34,13 +36,19 @@ public class GLUtil
     {
         Logging.fine("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
 
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        
         String vShader = loadFile(Paths.get("GLSL/vertexShader.glsl"));
         vertexShader = createShader(GL20.GL_VERTEX_SHADER, vShader);
 
         String fShader = loadFile(Paths.get("GLSL/fragmentShader.glsl"));
         fragmentShader = createShader(GL20.GL_FRAGMENT_SHADER, fShader);
-
+        
+        String tShader = loadFile(Paths.get("GLSL/textureFragmentShader.glsl"));
+        textureFragmentShader = createShader(GL20.GL_FRAGMENT_SHADER, tShader);
+        
         program = createProgram(vertexShader, fragmentShader);
+        textureProgram = createProgram(vertexShader, textureFragmentShader);
     }
 
     public static void cleanup()
@@ -57,10 +65,16 @@ public class GLUtil
         GL20.glDetachShader(program, vertexShader);
         GL20.glDetachShader(program, fragmentShader);
         
+        GL20.glUseProgram(program);
+        GL20.glDetachShader(program, vertexShader);
+        GL20.glDetachShader(program, textureFragmentShader);
+        
         GL20.glDeleteShader(vertexShader);
         GL20.glDeleteShader(fragmentShader);
+        GL20.glDeleteShader(textureFragmentShader);
         
         GL20.glDeleteProgram(program);
+        GL20.glDeleteProgram(textureProgram);
     }
 
     public static int createTexture(final String fileName, final int textureUnit)
@@ -111,16 +125,15 @@ public class GLUtil
 
     public static int createProgram(final int... shaders)
     {
-        //Position information will be attribute 0
-        GL20.glBindAttribLocation(GLUtil.program, 0, "in_Position");
-        // Color information will be attribute 1
-        GL20.glBindAttribLocation(GLUtil.program, 1, "in_Color");
-        // Texture coord information will be attribute 2
-        GL20.glBindAttribLocation(GLUtil.program, 2, "in_TextureCoord");
-        // Normal vector will be attribute 3
-        GL20.glBindAttribLocation(GLUtil.program, 3, "in_Normal");
-        
         int program = GL20.glCreateProgram();
+        //Position information will be attribute 0
+        GL20.glBindAttribLocation(program, 0, "in_Position");
+        // Color information will be attribute 1
+        GL20.glBindAttribLocation(program, 1, "in_Color");
+        // Texture coord information will be attribute 2
+        GL20.glBindAttribLocation(program, 2, "in_TextureCoord");
+        // Normal vector will be attribute 3
+        GL20.glBindAttribLocation(program, 3, "in_Normal");        
         for (int s : shaders)
         {
             GL20.glAttachShader(program, s);
